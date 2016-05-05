@@ -65,6 +65,10 @@ bool Move::checkMove(const ChessBoard &b){
     return checkPawn(b);
   }
 
+  else if(piece == 3 || piece == 9){
+    return checkKnight(target_location_piece);
+  }
+
   /*switch(piece){
     case 0: //empty piece
     case 1: return checkPawn(b);
@@ -126,38 +130,20 @@ bool Move::checkKnight(int target_location_piece){
   int y_diff = curr_y - move_y;
   x_diff = x_diff > 0 ? x_diff : x_diff * -1;
   y_diff = y_diff > 0 ? y_diff : y_diff * -1;
-  if(color){ //if white
-    if((x_diff == 1 && y_diff == 2) || (x_diff == 2 && y_diff == 1)){
-      if(!target_location_piece){ //valid move to empty space
-        capture_flag = false;
-        return true;
-      }
-      else if(target_location_piece < 7){ //can't move here because piece of same color
-        friendly = true;
-        return false;
-      }
-      else{ //must be black piece, able to capture
-        capture_flag = true;
-        return true;
-      }
+
+  if((x_diff == 1 && y_diff == 2) || (x_diff == 2 && y_diff == 1)){
+    if(!target_location_piece){
+      capture_flag = true;
+      return true;
+    }
+    else if(color && target_location_piece >= 7){
+      return true;
+    }
+    else if(!color && target_location_piece < 7){
+      return true;
     }
   }
-  else{ //black piece
-    if((x_diff == 1 && y_diff == 2) || (x_diff == 2 && y_diff == 1)){
-      if(!target_location_piece){ //valid move to empty space
-        capture_flag = false;
-        return true;
-      }
-      else if(target_location_piece >= 7){ //can't move here because piece of same color
-        friendly = true;
-        return false;
-      }
-      else{ //must be white piece, able to capture
-        capture_flag = true;
-        return true;
-      }
-    }
-  }
+
   capture_flag = false;
   return false;
 }
