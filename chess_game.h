@@ -14,6 +14,7 @@ public:
 private:
   Move moveObject;
   ChessBoard cBoard;
+  void checkFlags();
 };
 
 #endif

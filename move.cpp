@@ -14,7 +14,8 @@ Move::Move():
   w_en_passant_active(0),
   capture_flag(false),
   color(true),
-  friendly(false)
+  friendly(false),
+  enpassant(false)
 {
   
 }
@@ -48,16 +49,32 @@ bool Move::checkMove(const ChessBoard &b){
   int target_location_piece = b.getElement(move_x, move_y);
   cout<<"piece is: "<<piece<<endl;
 
-  switch(piece){
+  if(!piece){
+    cout<<"There is no piece there"<<endl;
+    return false;
+  }
+
+  if((color && piece >= 7) || (!color && piece > 0 && piece < 7)){
+    cout<<"Attempting to move opponent's peice"<<endl;
+    return false;
+
+  }
+
+  if(piece == 1 || piece == 7){
+    resetEnpassant();
+    return checkPawn(b);
+  }
+
+  /*switch(piece){
     case 0: //empty piece
-    case 1: return checkPawn(target_location_piece);
+    case 1: return checkPawn(b);
             break;
     case 2: //white rook
     case 3: //white knight
     case 4: //white bishop
     case 5: //white queen
     case 6: //white king
-    case 7: return checkPawn(target_location_piece);
+    case 7: return checkPawn(b);
             break;
     case 8: //black rook
     case 9: //black knight
@@ -65,7 +82,7 @@ bool Move::checkMove(const ChessBoard &b){
     case 11: //black queen
     case 12: //black king
     default: break;
-  }
+  }*/
   return false;
 
 
@@ -74,98 +91,33 @@ bool Move::checkMove(const ChessBoard &b){
 }
 
 //need to check for promotion still
-bool Move::checkPawn(int target_location_piece){
-  if(color){ //white pawn
-    if(w_pawn_moved){ //white pawn moved, can only move/capute 1 square a
-      if(curr_x - move_x != -1){
-        capture_flag = false;
-        return false; //invalid move
-      }
-      else{
-        
-        if(!target_location_piece){ //target square is not empty
-          if(move_y == curr_y){
-            capture_flag = false;
-            return false; //can't move forward, not empty
-          }
-          else if(move_y - curr_y == 1 || move_y - curr_y == -1){
-            //pawn capture
-            capture_flag = true;
-            return true;
-          }
-        }
-        else{
-          capture_flag = false;
-          return true;
-          //pawn can move forward into empty space
-        }
+bool Move::checkPawn(const ChessBoard &b){
+  int target_piece = b.getElement(move_x, move_y);
+  cout<<"target piece: "<<target_piece<<endl;
 
-      }
-    }
-
-    else if(!w_pawn_moved){
-      cout<<"do we even get here"<<endl;
-      if(curr_x == 1){  //ensure pawn is on starting rank
-        if(curr_x - move_x == -2 || curr_x - move_x == -1){
-          cout<<"why no here: " <<curr_x - move_x<<endl;
-          capture_flag = false;
-          return true; //invalid move, only can move 2 or 1 spaces
-        }
-        else{
-          if(!target_location_piece){ //if square empty can move
-            capture_flag = false;
-            return true;
-          }
-        }
-      }
-    }
-  }
-  else{ //black pawn
-    if(b_pawn_moved){ //white pawn moved, can only move/capute 1 square a
-      if(curr_x - move_x != 1){
-        capture_flag = false;
-        return false; //invalid move
-      }
-      else{
-        
-        if(!target_location_piece){ //target square is not empty
-          if(move_y == curr_y){
-            capture_flag = false;
-            return false; //can't move forward, not empty
-          }
-          else if(move_y - curr_y == 1 || move_y - curr_y == -1){
-            //pawn capture
-            capture_flag = true;
-            return true;
-          }
-        }
-        else{
-          //pawn can move forward into empty space
-          if(!target_location_piece){ //if square empty can move
-            capture_flag = false;
-            return true;
-          } 
-        }
-
-      }
-    }
-
-    else if(!b_pawn_moved){
-      if(curr_x == 7){  //ensure pawn is on starting rank
-        if(curr_x - move_x != 2 || curr_x - move_y != 1){
-          capture_flag = false;
-          return false; //invalid move, only can move 2 or 1 spaces
-        }
-      }
-      else{
-        capture_flag = false;
+  int x_diff = curr_x - move_x;
+  int y_diff = curr_y - move_y;
+  x_diff = x_diff > 0 ? x_diff : x_diff * -1;
+  y_diff = y_diff > 0 ? y_diff : y_diff * -1;
+  if(curr_x == 1 || curr_x == 6){ //pawn hasn't moved yet
+    if(x_diff == 2){
+      if(!target_piece){
+        cout<<"before here"<<endl;
+        checkEnpassant(b);
+        cout<<"after here"<<endl;
+        cout<<"black value: "<<b_en_passant_active<<endl;
+        cout<<"white value: "<<w_en_passant_active<<endl;
         return true;
       }
     }
-
+    else{
+      return pawnMoveCapture(b);
+    }
   }
-  capture_flag = false;
-  return false;
+  else{
+    return pawnMoveCapture(b);
+  }
+  
 }
 
 
@@ -396,6 +348,98 @@ bool Move::checkSlide(const ChessBoard &b, int steps, bool sign_x){
   return false;
 }
 
+
+void Move::checkEnpassant(const ChessBoard &b){
+  //check left and right of moved ylocation to see if a pawn is there
+  int y1 = move_y + 1;
+  int y2 = move_y - 1;
+  int p = 0;
+  if(checkInRange(y1)){
+    p = b.getElement(move_x,y1);
+    if(color && p == 7){
+      b_en_passant_active = true;
+      b_en_passant_direction = true;
+    }
+    else if(!color && p == 1){
+      w_en_passant_active = true;
+      w_en_passant_direction = true;
+    }
+  }
+
+  if(checkInRange(y2)){
+    p = b.getElement(move_x,y2);
+    if(color && p ==7){
+      b_en_passant_active = true;
+      b_en_passant_direction = false;
+    }
+    else if(!color && p == 1){
+      w_en_passant_active = true;
+      w_en_passant_direction = false;
+    }
+  }
+}
+
+bool Move::pawnMoveCapture(const ChessBoard &b){
+
+  int x_diff = curr_x - move_x;
+  int y_diff = curr_y - move_y;
+  int abs_x_diff = x_diff > 0 ? x_diff : x_diff * -1;
+  int abs_y_diff = y_diff > 0 ? y_diff : y_diff * -1;
+
+  int y1 = move_y + 1;
+  int y2 = move_y - 1;
+  int target_piece = b.getElement(move_x, move_y);
+  if(abs_x_diff == 1){ //pawn moving one space, can either capute or move straight
+    cout<<"should be here kaooa"<<endl;
+
+    //check for enpassant
+    if(color && w_en_passant_active){
+      if((w_en_passant_direction && y_diff == 1) || (!w_en_passant_direction && y_diff == -1)){
+        enpassant = true;
+        return true;
+
+      }
+    }
+
+    else if(!color && b_en_passant_active){
+      if((b_en_passant_direction && y_diff == 1) || (!b_en_passant_direction && y_diff == -1)){
+        enpassant = true;
+        return true;
+
+      }
+    }
+
+    //check for basic pawn movement and capture
+    if(color && abs_y_diff == 1 && (target_piece >= 7) && (x_diff > 0)){
+      //white pawn capturing black piece
+      capture_flag = true;
+      return true;
+    }
+
+    else if(!color && abs_y_diff == 1 && (target_piece >0 && target_piece < 7) && (x_diff < 0)){
+      cout<<"black pawn capture"<<endl;
+      //black pawn capturing white piece
+      capture_flag = true;
+      return true;
+    }
+    else if(!y_diff){
+      cout<<"advancing one"<<endl;
+      cout<<"color is: "<<color<<endl;
+      cout<<"x diff is: "<<x_diff<<endl;
+      if(color && (target_piece == 0) && (x_diff > 0)){
+        //white advancing one onto empty square
+        return true;
+      }
+      else if(!color && !target_piece && x_diff < 0){
+        return true;
+      }
+    }
+  }
+  return false;
+
+}
+
+
 bool Move::checkInRange(int a){
   if(a < 0 || a > 7) return false;
   return true;
@@ -415,4 +459,27 @@ int Move::getCur_x(){
 
 int Move::getCur_y(){
   return curr_y;
+}
+
+void Move::changeTurns(){
+  color = color ? false : true; //if white(true) change to black (false) or vice versa
+}
+
+void Move::resetEnpassant(){
+  enpassant = false;
+  if(!color && w_en_passant_active){
+    w_en_passant_active = false;
+  }
+  else if(color && b_en_passant_active){
+    b_en_passant_active = false;
+  }
+}
+
+bool Move::enpassantFlag(){
+  return enpassant;
+
+}
+
+bool Move::getTurn(){
+  return color;
 }

@@ -27,6 +27,8 @@ void ChessGame::run(){
           int move_x = moveObject.getMove_x();
           int move_y = moveObject.getMove_y();
           cBoard.movePiece(cur_x, cur_y, move_x, move_y);
+          checkFlags();
+          moveObject.changeTurns();
         }
 
       }
@@ -44,4 +46,16 @@ string ChessGame::getMoveInput(){
 int ChessGame::checkForCommands(string &input){
   if(input == "quit" || input == "q") return 0;
   else return 1;
+}
+
+void ChessGame::checkFlags(){
+  if(moveObject.enpassantFlag()){
+    if(moveObject.getTurn()){//white turn
+      cBoard.capture(moveObject.getMove_x() + 1, moveObject.getMove_y());
+    }
+    else{//black turn
+      cBoard.capture(moveObject.getMove_x() - 1, moveObject.getMove_y());
+
+    }
+  }
 }

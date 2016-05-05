@@ -27,19 +27,19 @@ empty: 0
 
 
 void ChessBoard::initBoard(){
-  board[0][0] = 2; board[0][7] = 2; //white rook
-  board[0][1] = 3; board[0][6] = 3; //white knight
-  board[0][2] = 4; board[0][5] = 4; //white bishop
-  board[0][3] = 6; //white king
-  board[0][4] = 5; //white queen
-  for(int i = 0; i < 8; i++) board[1][i] = 1;
+  board[0][0] = 8; board[0][7] = 8; //black rook
+  board[0][1] = 9; board[0][6] = 9; //black knight
+  board[0][2] = 10; board[0][5] = 10; //black bishop
+  board[0][3] = 11; //black king
+  board[0][4] = 12; //black queen
+  for(int i = 0; i < 8; i++) board[1][i] = 7;
 
-  board[7][0] = 8; board[7][7] = 8; //black rook
-  board[7][1] = 9; board[7][6] = 9; //black knight
-  board[7][2] = 10; board[7][5] = 10; //black bishop
-  board[7][3] = 12; //black king
-  board[7][4] = 11; //black queen
-  for(int i = 0; i < 8; i++) board[6][i] = 7;
+  board[7][0] = 2; board[7][7] = 2; //white rook
+  board[7][1] = 3; board[7][6] = 3; //white knight
+  board[7][2] = 4; board[7][5] = 4; //white bishop
+  board[7][3] = 6; //white king
+  board[7][4] = 5; //white queen
+  for(int i = 0; i < 8; i++) board[6][i] = 1;
 //  for(int i = 2; i < 6; i++){
 //    for(int j = 0; j < 7; j++){
 //      board[i][j] = 0;
@@ -74,7 +74,7 @@ int ChessBoard::getElement(const int &index_i, const int &index_j) const{
 }
 void ChessBoard::capture(const int &index_i, const int &index_j){
   assert(0<= index_i && index_i<8 && 0<=index_j && index_j < 8);
-  //board[index_i][index_j] = 0;
+  board[index_i][index_j] = 0;
 }
 
 void ChessBoard::updateBoard(const int &index_i, const int &index_j, int value){
@@ -87,6 +87,7 @@ void ChessBoard::movePiece(const int x1, const int y1, const int x2, const int y
   assert(0<= x1 && x1 <8 && 0<=y1 && y1 < 8);
   assert(0<= x2 && x2 <8 && 0<=y2 && y2 < 8);
   int temp = board[x1][y1];
+  board[x1][y1] = 0;
   board[x2][y2] = temp;
 
 }
