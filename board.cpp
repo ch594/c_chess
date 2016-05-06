@@ -30,8 +30,8 @@ void ChessBoard::initBoard(){
   board[0][0] = 8; board[0][7] = 8; //black rook
   board[0][1] = 9; board[0][6] = 9; //black knight
   board[0][2] = 10; board[0][5] = 10; //black bishop
-  board[0][3] = 11; //black king
-  board[0][4] = 12; //black queen
+  board[0][3] = 12; //black king
+  board[0][4] = 11; //black queen
   for(int i = 0; i < 8; i++) board[1][i] = 7;
 
   board[7][0] = 2; board[7][7] = 2; //white rook

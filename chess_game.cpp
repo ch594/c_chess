@@ -3,11 +3,13 @@
 using namespace std;
 
 void ChessGame::run(){
-  while(1){
-    cBoard.print();
-    cout<<"Enter a move: "<<endl;
-    string move;
-    move = getMoveInput();
+
+
+  cBoard.print();
+  cout<<"Enter a move: "<<endl;
+  string move;
+  //move = getMoveInput();
+  while(cin >> move){
     //cout<<"move is: "<<move<<endl;
     int check = checkForCommands(move);
     //cout<<"check is: "<<check<<endl;
@@ -33,6 +35,9 @@ void ChessGame::run(){
 
       }
     }
+      cBoard.print();
+  cout<<"Enter a move: "<<endl;
+    
   }
 }
 

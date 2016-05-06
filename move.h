@@ -10,15 +10,15 @@ public:
   Move();
   int parseString();
   void updateString(const string &new_move);
-  bool checkMove(const ChessBoard &b); 
+  bool checkMove(ChessBoard &b); 
 
 
-  bool checkPawn(const ChessBoard &b); //1 = white, 0 = black
+  bool checkPawn(ChessBoard &b); //1 = white, 0 = black
   bool checkKnight(int target_location_piece); //1 = white, 0 = black
   bool checkBishop(const ChessBoard &b); //1 = white, 0 = black
   bool checkRook(const ChessBoard &b);
   bool checkQueen(const ChessBoard &b);
-  bool checkKing(const ChessBoard &b);
+  bool checkKing(ChessBoard &b);
   void changeTurns();
   bool enpassantFlag();//return true if enpassant capture happened
   bool getTurn(); //return value of color (whose turn it is)
@@ -60,7 +60,7 @@ public:
 
   //helper functions for sliding pieces
   bool checkDiagonal(const ChessBoard &b, int steps, bool sign_x, bool sign_y);
-  bool checkSlide(const ChessBoard &b, int steps, bool sign_x);
+  bool checkSlide(const ChessBoard &b, int steps, bool, bool);
 
   //check if piece is in board 
   bool checkInRange(int a);
@@ -73,6 +73,11 @@ public:
 
   //reset the enpassant flags the next turn
   void resetEnpassant();
+
+  //check for promotion of pawn and promote
+  bool checkPromotion(ChessBoard &b);
+
+  int getPromotionInput();
 };
 
 
