@@ -12,6 +12,11 @@ public:
   void updateString(const string &new_move);
   bool checkMove(ChessBoard &b); 
   bool check(const ChessBoard &b); //check for check
+  bool getTurn(); //return value of color (whose turn it is)
+  bool enpassantFlag();//return true if enpassant capture happened
+  void changeTurns();
+  bool isStillCheck(const ChessBoard &b);
+  bool getCheckStatus();
 
 
   bool checkPawn(ChessBoard &b); //1 = white, 0 = black
@@ -20,9 +25,6 @@ public:
   bool checkRook(const ChessBoard &b);
   bool checkQueen(const ChessBoard &b);
   bool checkKing(ChessBoard &b);
-  void changeTurns();
-  bool enpassantFlag();//return true if enpassant capture happened
-  bool getTurn(); //return value of color (whose turn it is)
 
   int getMove_x();
   int getMove_y();
@@ -42,6 +44,7 @@ public:
   bool w_en_passant_direction; // true = right, false = left
   bool friendly; //flag if move runs into piece of same color
   bool enpassant; //flag to determine if enpassant happened
+  bool check_flag;
 
   //positions of the kings
   int w_king_x;
