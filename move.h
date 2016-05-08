@@ -11,6 +11,7 @@ public:
   int parseString();
   void updateString(const string &new_move);
   bool checkMove(ChessBoard &b); 
+  bool check(const ChessBoard &b); //check for check
 
 
   bool checkPawn(ChessBoard &b); //1 = white, 0 = black
@@ -32,17 +33,21 @@ public:
   bool b_rook1_moved;
   bool b_rook2_moved;
   bool b_king_moved;
-  bool b_pawn_moved;
   bool w_rook1_moved;
   bool w_rook2_moved;
   bool w_king_moved;
-  bool w_pawn_moved;
   bool b_en_passant_active;
   bool b_en_passant_direction; // true = right, false = left
   bool w_en_passant_active;
   bool w_en_passant_direction; // true = right, false = left
   bool friendly; //flag if move runs into piece of same color
   bool enpassant; //flag to determine if enpassant happened
+
+  //positions of the kings
+  int w_king_x;
+  int w_king_y;
+  int b_king_x;
+  int b_king_y;
 
   bool color; //what piece
   bool capture_flag; //true if move results in enemy piece captured

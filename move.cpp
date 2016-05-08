@@ -5,17 +5,19 @@ Move::Move():
   b_rook1_moved(0),
   b_rook2_moved(0),
   b_king_moved(0),
-  b_pawn_moved(0),
   w_rook1_moved(0),
   w_rook2_moved(0),
   w_king_moved(0),
-  w_pawn_moved(0),
   b_en_passant_active(0),
   w_en_passant_active(0),
   capture_flag(false),
   color(true),
   friendly(false),
-  enpassant(false)
+  enpassant(false),
+  w_king_x(7),
+  w_king_y(3),
+  b_king_x(0),
+  b_king_y(3)
 {
   
 }
@@ -123,8 +125,8 @@ bool Move::checkPawn(ChessBoard &b){
     if(x_diff == 2){
       if(!target_piece && y_diff == 0){
         checkEnpassant(b);
-        cout<<"black value: "<<b_en_passant_active<<endl;
-        cout<<"white value: "<<w_en_passant_active<<endl;
+        //cout<<"black value: "<<b_en_passant_active<<endl;
+        //cout<<"white value: "<<w_en_passant_active<<endl;
         return true;
       }
     }
@@ -179,9 +181,9 @@ bool Move::checkBishop(const ChessBoard &b){
 
   rise = rise > 0 ? rise : rise * -1;
   run = run > 0 ? run : run * -1;
-     cout<<"check bishop"<<endl;
-     cout<<"rise is: "<<rise<<endl;
-     cout<<"run is: "<<run<<endl;
+     //cout<<"check bishop"<<endl;
+     //cout<<"rise is: "<<rise<<endl;
+     //cout<<"run is: "<<run<<endl;
   if(run == rise){ // if slope != |1| then can't be diagonal
     return checkDiagonal(b, rise, sign_x, sign_y);
 
@@ -209,8 +211,8 @@ bool Move::checkRook(const ChessBoard &b){
     bool direction = y_diff == 0 ? true : false;
     bool sign = (direction ? sign_x : sign_y) ? false : true;
     //x_diff = sign ? x_diff : false;
-    cout<<"x_diff is: "<<x_diff<<endl;
-    cout<<"y_diff is: "<<y_diff<<endl;
+    //cout<<"x_diff is: "<<x_diff<<endl;
+    //cout<<"y_diff is: "<<y_diff<<endl;
     bool result = checkSlide(b, direction ? x_diff : y_diff, direction, sign);
     if(color && result && curr_x == 7 && curr_y == 0){
       w_rook1_moved = true;
@@ -321,7 +323,7 @@ bool Move::checkKing(ChessBoard &b){
   }
 
   if(x_diff <= 1 && y_diff <= 1){ //king can't move more than 1 space
-    cout<<"must be here"<<endl;
+    //cout<<"must be here"<<endl;
     if(color && temp_target > 0 && temp_target < 7){
       friendly = true;
       return false;
@@ -352,32 +354,32 @@ bool Move::checkDiagonal(const ChessBoard &b, int steps, bool sign_x, bool sign_
 
   //check for pieces from beggining to 1 minus the end
   for(int i = 1; i < steps; i++){
-    cout<<"steps"<<endl;
+    //cout<<"steps"<<endl;
     //if sign is negative, subtract, if sign is positive add
     int temp_x = sign_x? curr_x + i : curr_x - i;
     int temp_y = sign_y? curr_y + i : curr_y - i;
-    cout<<"temp_x: "<<temp_x<<" temp_y "<<temp_y<<endl;
+    //cout<<"temp_x: "<<temp_x<<" temp_y "<<temp_y<<endl;
     int temp_target = b.getElement(temp_x, temp_y);
-    cout<<"temp target is: "<<temp_target<<endl;
+    //cout<<"temp target is: "<<temp_target<<endl;
 
     if(temp_target >0 && temp_target < 7 && color){ //piece of same color (white) in path
-      cout<<"if"<<endl;
+      //cout<<"if"<<endl;
       friendly = true;
       return false;
     }
     //otherwise if bla
     else if(temp_target > 0 && temp_target >=7 && !color ){
-      cout<<"second"<<endl;
+      //cout<<"second"<<endl;
       friendly = true;
       return false;
 
     }
     else if(temp_target){ //the other case where there's an enemy piece before the end of path
-      cout<<"third"<<endl;
+      //cout<<"third"<<endl;
       return false;
     }
   }
-  cout<<"here after loop"<<endl;
+  //cout<<"here after loop"<<endl;
   int target_piece = b.getElement(move_x, move_y);
   if(color && target_piece >= 7){
     capture_flag = true;
@@ -398,18 +400,18 @@ bool Move::checkSlide(const ChessBoard &b, int steps, bool direction, bool sign)
   //direction true = vertical sliding, false = horizontal sliding
 
   //int temp_direction = direction ? curr_y : curr_x;
-    cout<<"steps is: "<<steps<<endl;
+   // cout<<"steps is: "<<steps<<endl;
   int temp_sign = sign ? 1 : -1;
   int temp_x = 0;
   int temp_y = 0;
   for(int i = 1; i < steps; i++){
-    cout<<"direction is "<<direction<<" sign is "<<sign<<endl;
+    //cout<<"direction is "<<direction<<" sign is "<<sign<<endl;
     temp_x = direction ? curr_x + (i*temp_sign) : curr_x;
     temp_y = direction ? curr_y : curr_y + (i*temp_sign) ;
     //int temp_x = sign_x ? curr_x + i : curr_x - i;
     int temp_target = b.getElement(temp_x, temp_y);
-    cout<<"temp target is: "<<temp_target<<endl;
-    cout<<"temp x is "<<temp_x<<" temp y is "<<temp_y<<endl;
+    //cout<<"temp target is: "<<temp_target<<endl;
+   // cout<<"temp x is "<<temp_x<<" temp y is "<<temp_y<<endl;
     if(color && temp_target > 0 && temp_target < 7){ //white rook running into white piece
       friendly = true;
       return false;
@@ -481,7 +483,7 @@ bool Move::pawnMoveCapture(const ChessBoard &b){
   int y2 = move_y - 1;
   int target_piece = b.getElement(move_x, move_y);
   if(abs_x_diff == 1){ //pawn moving one space, can either capute or move straight
-    cout<<"should be here kaooa"<<endl;
+    //cout<<"should be here kaooa"<<endl;
 
     //check for enpassant
     if(color && w_en_passant_active){
@@ -508,15 +510,15 @@ bool Move::pawnMoveCapture(const ChessBoard &b){
     }
 
     else if(!color && abs_y_diff == 1 && (target_piece >0 && target_piece < 7) && (x_diff < 0)){
-      cout<<"black pawn capture"<<endl;
+      //cout<<"black pawn capture"<<endl;
       //black pawn capturing white piece
       capture_flag = true;
       return true;
     }
     else if(!y_diff){
-      cout<<"advancing one"<<endl;
-      cout<<"color is: "<<color<<endl;
-      cout<<"x diff is: "<<x_diff<<endl;
+      //cout<<"advancing one"<<endl;
+      //cout<<"color is: "<<color<<endl;
+      //cout<<"x diff is: "<<x_diff<<endl;
       if(color && (target_piece == 0) && (x_diff > 0)){
         //white advancing one onto empty square
         return true;
@@ -587,7 +589,7 @@ bool Move::getTurn(){
 }
 
 int Move::getPromotionInput(){
-  cout<<"Enter piece to promot pawn to(Q, B, N, R)"<<endl;
+  cout<<"Enter piece to promote pawn to(Q, B, N, R)"<<endl;
   string unit;
   cin>>unit;
   int piece = 0;
@@ -608,4 +610,151 @@ int Move::getPromotionInput(){
     else if (unit == "R") piece = 8;
   }
   
+}
+
+bool Move::check(const ChessBoard &b){
+  //checking for knight being in range
+  //possible knights must be in a 5x5 square with the king in center
+
+  int king_x = color ? b_king_x : w_king_x;
+  int king_y = color ? b_king_y : w_king_y;
+  int target_piece = color ? 3 : 9;
+
+  for(int i = king_x - 2; i <= king_x + 2; i++){
+   
+    if(checkInRange(i)){
+      cout<<"in this loop"<<endl;
+      
+      for(int j = king_y - 2; j <= king_y + 2; j++){
+     
+        if(checkInRange(j)){
+          int piece = b.getElement(i,j);
+          
+          if(piece == target_piece){
+            int temp_i = king_x - i;
+            int temp_j = king_y - j;
+            temp_i = temp_i > 0 ? temp_i : temp_i * -1;
+            temp_j = temp_j > 0 ? temp_j : temp_j * -1;
+            //cout<<"in inner loop"<<endl;
+            //cout<<"temp_i: "<<temp_i<<" temp_j: "<<temp_j<<endl;
+            if(3 == temp_i + temp_j ) return true;
+
+          }
+
+        }
+      
+      }
+    }
+  }
+
+  //check by bishop or queen diagonally
+
+  target_piece = color ? 10 : 4;
+
+
+  for(int d = 0 ; d < 3; d++){
+    int step_x = 0;
+    int step_y = 0;
+
+    if(d == 0){
+      step_x = 1;
+      step_y =1;
+    }
+    else if(d == 1){
+      step_x = 1;
+      step_y = -1;
+
+    }
+    else if(d == 2){
+      step_x = -1;
+      step_y = 1;
+    }
+    else if(d == 3){
+      step_x = -1;
+      step_y = -1;
+    }
+
+    for(int i = king_x, j = king_y; checkInRange(i) && checkInRange(j); 
+      i += step_x, j += step_y){
+      int piece = b.getElement(i,j);
+      if(piece == 6 || piece == 12) continue;
+
+      //if same color then blocking potential check
+      if(!color && piece > 0 && piece < 7) break;
+      else if(color && piece >= 7) break;
+      else if(!color && (piece == 10 || piece == 11)){
+        return true;
+      }
+      else if(color && (piece == 4 || piece == 5)) {
+        return true;
+      }
+    }
+
+  }
+
+  //rook or queen sliding
+
+  for(int d = 0 ; d < 3; d++){
+    int step_x = 0;
+    int step_y = 0;
+
+    if(d == 0){
+      step_x = 1;
+      step_y =0;
+    }
+    else if(d == 1){
+      step_x = 1;
+      step_y = 0;
+
+    }
+    else if(d == 2){
+      step_x = 0;
+      step_y = 1;
+    }
+    else if(d == 3){
+      step_x = 0;
+      step_y = -1;
+    }
+
+    for(int i = king_x, j = king_y; checkInRange(i) && checkInRange(j); 
+      i += step_x, j += step_y){
+      int piece = b.getElement(i,j);
+      if(piece == 6 || piece == 12) continue;
+
+      //if same color then blocking potential check
+      if(!color && piece > 0 && piece < 7) break;
+      else if(color && piece >= 7) break;
+      else if(!color && (piece == 8 || piece == 11)){
+        return true;
+      }
+      else if(color && (piece == 2 || piece == 5)) {
+        return true;
+      }
+    }
+
+  }
+
+  //pawn check
+  if(color){
+    int temp_i = king_x + 1;
+    int temp_j = king_y - 1;
+    int temp_j2 = king_y + 1;
+    if(checkInRange(temp_i) && checkInRange(temp_j) && checkInRange(temp_j2)){
+      if(b.getElement(temp_i, temp_j) == 2) return true;
+      if(b.getElement(temp_i, temp_j2) == 2) return true;
+    }
+  }
+  else if(!color){
+    int temp_i = king_x - 1;
+    int temp_j = king_y - 1;
+    int temp_j2 = king_y + 1;
+    if(checkInRange(temp_i) && checkInRange(temp_j) && checkInRange(temp_j2)){
+      if(b.getElement(temp_i, temp_j) == 7) return true;
+      if(b.getElement(temp_i, temp_j2) == 7) return true;
+    }    
+  }
+
+
+
+  return false;
 }

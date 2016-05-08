@@ -30,6 +30,7 @@ void ChessGame::run(){
           int move_y = moveObject.getMove_y();
           cBoard.movePiece(cur_x, cur_y, move_x, move_y);
           checkFlags();
+          if(moveObject.check(cBoard)) cout<<"you are in check"<<endl;
           moveObject.changeTurns();
         }
 
