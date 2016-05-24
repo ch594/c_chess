@@ -1,6 +1,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 #include <unordered_map>
+#include <unordered_set>
 #include <string>
 using namespace std;
 
@@ -49,6 +50,7 @@ public:
   void movePiece(const int x1, const int y1, const int x2, const int y2);
 private:
   void initBoard();
+  unordered_map<int, unordered_set<int> > locations;
 
 };
 

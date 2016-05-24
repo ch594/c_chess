@@ -3,8 +3,6 @@
 #include <vector>
 #include <algorithm>
 #include <set>
-#include <unordered_map>
-#include <unordered_set>
 #include "board.h"
 #include <cassert>
 using namespace std;

@@ -1,6 +1,8 @@
 #include "move.h"
 #include <iostream>
 #include <clocale>
+#define DEBUG 1
+
 Move::Move():
   b_rook1_moved(0),
   b_rook2_moved(0),
@@ -642,7 +644,7 @@ bool Move::check(const ChessBoard &b){
   for(int i = king_x - 2; i <= king_x + 2; i++){
    
     if(checkInRange(i)){
-      cout<<"in this loop"<<endl;
+      //cout<<"in this loop"<<endl;
       
       for(int j = king_y - 2; j <= king_y + 2; j++){
      
@@ -810,7 +812,6 @@ bool Move::isStillCheck(const ChessBoard &b){
   for(int i = king_x - 2; i <= king_x + 2; i++){
    
     if(checkInRange(i)){
-      cout<<"in this loop"<<endl;
       
       for(int j = king_y - 2; j <= king_y + 2; j++){
      

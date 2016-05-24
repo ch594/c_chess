@@ -1,0 +1,1 @@
+This is a console based chess application. Currently I have implemented all the rules for chess and I'm working on move generation.
