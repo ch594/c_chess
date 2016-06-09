@@ -12,15 +12,15 @@ Move::Move():
   w_king_moved(0),
   b_en_passant_active(0),
   w_en_passant_active(0),
-  capture_flag(false),
-  color(true),
   friendly(false),
   enpassant(false),
+  check_flag(true),
   w_king_x(7),
   w_king_y(3),
   b_king_x(0),
   b_king_y(3),
-  check_flag(true)
+  color(true),
+  capture_flag(false)
 {
   
 }
@@ -141,6 +141,7 @@ bool Move::checkPawn(ChessBoard &b){
     if(checkPromotion(b)) return true;
     return pawnMoveCapture(b);
   }
+  return false;
   
 }
 
@@ -500,8 +501,8 @@ bool Move::pawnMoveCapture(const ChessBoard &b){
   int abs_x_diff = x_diff > 0 ? x_diff : x_diff * -1;
   int abs_y_diff = y_diff > 0 ? y_diff : y_diff * -1;
 
-  int y1 = move_y + 1;
-  int y2 = move_y - 1;
+  //int y1 = move_y + 1;
+  //int y2 = move_y - 1;
   int target_piece = b.getElement(move_x, move_y);
   if(abs_x_diff == 1){ //pawn moving one space, can either capute or move straight
     //cout<<"should be here kaooa"<<endl;
@@ -630,6 +631,7 @@ int Move::getPromotionInput(){
     else if(unit == "N") piece = 9;
     else if (unit == "R") piece = 8;
   }
+  return piece;
   
 }
 

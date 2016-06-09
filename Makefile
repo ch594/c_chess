@@ -1,7 +1,8 @@
 appname := chess.out
 
 CXX := g++
-CXXFLAGS := -std=c++11
+CXXFLAGS := -std=c++11 -Wall 
+LDLIBS := -lsfml-system -lsfml-network
 
 srcfiles := $(shell find . -name "*.cpp")
 objects  := $(patsubst %.cpp, %.o, $(srcfiles))

@@ -15,6 +15,8 @@ private:
   Move moveObject;
   ChessBoard cBoard;
   void checkFlags();
+  bool ask_for_network();
+  void run_network();
 };
 
 #endif
