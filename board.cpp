@@ -52,6 +52,7 @@ ChessBoard::ChessBoard(): board{}{
 }
 
 void ChessBoard::print(){
+  cout<<endl;
   for(int i = 0; i <8; i++){
     cout<<8-i<<"  ";
     for(int j = 0; j < 8; j++){
@@ -63,7 +64,7 @@ void ChessBoard::print(){
   for(int i = 0; i <8; i++){
     cout<<char('A' + i)<<" ";
   }
-  cout<<endl;
+  cout<<endl<<endl;
 }
 
 int ChessBoard::getElement(const int &index_i, const int &index_j) const{

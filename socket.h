@@ -12,12 +12,15 @@ public:
   void sendMessage(string message);
   string receiveMessage();
   string getInput();
+  ~cMessage();
 
 private:
   bool server;
   sf::TcpSocket socket;
+  sf::TcpListener *listener;
   void clientInit();
   void serverInit();
+
 };
 
 #endif

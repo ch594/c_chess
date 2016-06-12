@@ -17,6 +17,7 @@ private:
   void checkFlags();
   bool ask_for_network();
   void run_network();
+  int doMove(string &move);
 };
 
 #endif

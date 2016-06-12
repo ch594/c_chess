@@ -16,10 +16,10 @@ cMessage::cMessage(bool server = true) :server(server) {
 
 void cMessage::serverInit(){
 
-  sf::TcpListener listener;
+  listener = new sf::TcpListener;
   int port = 5001;
-  listener.listen(port);
-  listener.accept(socket);
+  listener->listen(port);
+  listener->accept(socket);
   cout<<"Connection established with client"<<endl;
 
 
@@ -27,16 +27,20 @@ void cMessage::serverInit(){
 
 void cMessage::clientInit(){
 
-  string ip_address("");
+  string ip_address("192.168.193.128");
   int port;
   cout <<"Enter the IP Address and port"<<endl;
   cout<<"IP Address: "<<endl;
-  cin >> ip_address;
+  //cin >> ip_address;
   cout <<"Port: "<<endl;
   cin >> port;
   cout <<"port is: " << port << endl;
   if(socket.connect(ip_address, port) == sf::Socket::Done){
     cout <<"Connected with server"<<endl;
+  }
+  else{
+    cout<<"Unable to connect"<<endl;
+    //exit(0);
   }
   cin.clear();
   cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -46,15 +50,27 @@ void cMessage::clientInit(){
 void cMessage::sendMessage(string message){
   sf::Packet packet;
   packet << message;
-  socket.send(packet);
+  if(socket.send(packet) == sf::Socket::Done){
+    ;
+  }
+  else{
+    cout<<"Error sending packet"<<endl;
+    //exit(0);
+  }
 }
 
 string cMessage::receiveMessage(){
   sf::Packet packet;
-  socket.receive(packet);
-  string message;
-  packet >> message;
-  return message;
+  if(socket.receive(packet) == sf::Socket::Done){
+    string message;
+    packet >> message;
+    return message;
+    
+  }
+  else{
+    cout<<"Error receiving packet"<<endl;
+    //exit(0);
+  }
 }
 
 string cMessage::getInput(){
@@ -64,4 +80,12 @@ string cMessage::getInput(){
   getline(cin, s);  
   return s;
 
+}
+
+cMessage::~cMessage(){
+  socket.disconnect();
+  if(server){
+    listener->close();
+    delete listener;
+  }
 }
