@@ -17,6 +17,7 @@ public:
   void changeTurns();
   bool isStillCheck(const ChessBoard &b);
   bool getCheckStatus();
+  void resetCheckStatus();
 
 
   bool checkPawn(ChessBoard &b); //1 = white, 0 = black

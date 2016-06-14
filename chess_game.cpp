@@ -13,10 +13,34 @@ void ChessGame::run(){
   cBoard.print();
 
   
-  cout<<"Enter a move: "<<endl;
-  string move;
+
   //move = getMoveInput();
-  while(cin >> move){
+  string move;
+  while(true){
+    cBoard.print();
+    cout<<"Enter a move: "<<endl;
+    cin >> move;
+    //cout<<"move is: "<<move<<endl;
+    int check = checkForCommands(move);
+    //cout<<"check is: "<<check<<endl;
+    if(!check) break;
+    if(moveObject.getCheckStatus()){
+      cout<<"You are in check"<<endl;
+    }
+    int move_result = doMove(move);
+    if (move_result == 1) {
+      continue;
+    }
+
+    //if they start the turn in check, they can't end it in check,
+    //so it's safe to reset the check flag to false
+    if(moveObject.getCheckStatus()) {
+      moveObject.resetCheckStatus();
+    }
+
+  }
+
+  /*while(cin >> move){
     //cout<<"move is: "<<move<<endl;
     int check = checkForCommands(move);
     //cout<<"check is: "<<check<<endl;
@@ -28,7 +52,7 @@ void ChessGame::run(){
     cBoard.print();
     cout<<"Enter a move: "<<endl;
     
-  }
+  }*/
   return;
 }
 
@@ -136,41 +160,19 @@ void ChessGame::run_network(){
         c_message.sendMessage("quit");
         break;
       } 
-      else{
-        moveObject.updateString(move);
-        int parse = moveObject.parseString();
-        if(parse == 0){
-          bool check_move = moveObject.checkMove(cBoard);
-
-          if(check_move){
-
-            ChessBoard *b = new ChessBoard(cBoard);
-            int cur_x = moveObject.getCur_x();
-            int cur_y = moveObject.getCur_y();
-            int move_x = moveObject.getMove_x();
-            int move_y = moveObject.getMove_y();
-            b->movePiece(cur_x, cur_y, move_x, move_y);
-            checkFlags();
-            if(moveObject.getCheckStatus()){
-              if(moveObject.isStillCheck(*b)){
-                cout<<"You are still in check, make a new move"<<endl;
-                continue;
-              }
-            }
-            delete b;
-            cBoard.movePiece(cur_x, cur_y, move_x, move_y);
-            if(moveObject.check(cBoard)) cout<<"You are in check"<<endl;
-            moveObject.changeTurns();
-          }
-          else{
-            cout<<"Invalid move"<<endl;
-            continue;
-          }
-
-        }
+      int move_result = doMove(move);
+      if(move_result == 1){
+        continue;
       }
-      c_message.sendMessage(move);
-      turn = false;
+      else if(move_result == 0){
+        c_message.sendMessage(move);
+        turn = false;
+        
+      }
+
+      if(moveObject.getCheckStatus()) {
+        moveObject.resetCheckStatus();
+      }
 
       
 
@@ -181,40 +183,18 @@ void ChessGame::run_network(){
       string move = c_message.receiveMessage();
       int check = checkForCommands(move);
       if(!check) break;
-      else{
-        moveObject.updateString(move);
-        cout<<"Color is: "<<moveObject.color<<endl;
-        int parse = moveObject.parseString();
-        if(parse == 0){
-          bool check_move = moveObject.checkMove(cBoard);
 
-          if(check_move){
-
-            ChessBoard *b = new ChessBoard(cBoard);
-            int cur_x = moveObject.getCur_x();
-            int cur_y = moveObject.getCur_y();
-            int move_x = moveObject.getMove_x();
-            int move_y = moveObject.getMove_y();
-            b->movePiece(cur_x, cur_y, move_x, move_y);
-            checkFlags();
-            if(moveObject.getCheckStatus()){
-              if(moveObject.isStillCheck(*b)){
-                cout<<"You are still in check, make a new move"<<endl;
-                continue;
-              }
-            }
-            delete b;
-            cBoard.movePiece(cur_x, cur_y, move_x, move_y);
-            if(moveObject.check(cBoard)) cout<<"You are in check"<<endl;
-            moveObject.changeTurns();
-          }
-          else{
-            cout<<"Invalid move"<<endl;
-          }
-
-        }
+      int move_result = doMove(move);
+      if(move_result == 1){
+        continue;
       }
-      turn = true;
+      else if(move_result == 0){
+        turn = true;
+        
+      }
+      if(moveObject.getCheckStatus()) {
+        cout<<"You are in check"<<endl;
+      }
 
     }
 
@@ -233,9 +213,9 @@ int ChessGame::doMove(string &move){
   int parse = moveObject.parseString();
   if(parse == 0){
     bool check_move = moveObject.checkMove(cBoard);
-    cout<<"how many times through this"<<endl;
+    //cout<<"how many times through this"<<endl;
     if(check_move){
-      cout<<"under check move branch"<< endl;
+      //cout<<"under check move branch"<< endl;
 
       ChessBoard *b = new ChessBoard(cBoard);
       int cur_x = moveObject.getCur_x();
@@ -245,6 +225,7 @@ int ChessGame::doMove(string &move){
       b->movePiece(cur_x, cur_y, move_x, move_y);
       checkFlags();
       if(moveObject.getCheckStatus()){
+        cout<<"In the you are in check loop"<<endl;
         if(moveObject.isStillCheck(*b)){
           cout<<"You are still in check, make a new move"<<endl;
           delete b;
@@ -253,7 +234,8 @@ int ChessGame::doMove(string &move){
       }
       delete b;
       cBoard.movePiece(cur_x, cur_y, move_x, move_y);
-      if(moveObject.check(cBoard)) cout<<"You are in check"<<endl;
+      moveObject.check(cBoard);
+      //if(moveObject.check(cBoard)) cout<<"You are in check"<<endl;
       moveObject.changeTurns();
     }
     else{
@@ -261,6 +243,9 @@ int ChessGame::doMove(string &move){
       return 1;
     }
 
+  }
+  else{
+    return 1;
   }
 
   return 0;

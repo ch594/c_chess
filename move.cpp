@@ -65,6 +65,7 @@ bool Move::checkMove(ChessBoard &b){
 
   }
 
+
   if(piece == 1 || piece == 7){
     resetEnpassant();
     return checkPawn(b);
@@ -615,7 +616,8 @@ int Move::getPromotionInput(){
   string unit;
   cin>>unit;
   int piece = 0;
-  while (unit != "Q" || unit != "B" || unit != "N" || unit != "R"){
+  while (!(unit != "Q" || unit != "B" || unit != "N" || unit != "R")){
+    cout <<"You entered: "<<unit<<endl;
     cout<<"Invalid piece. Please choose from one of Q, B, N, R"<<endl;
     cin>>unit;
   }
@@ -706,8 +708,10 @@ bool Move::check(const ChessBoard &b){
       if(piece == 6 || piece == 12) continue;
 
       //if same color then blocking potential check
-      if(!color && piece > 0 && piece < 7) break;
-      else if(color && piece >= 7) break;
+      if(!color && piece > 0 && piece < 10) break;
+      else if(color && piece > 0 && piece != 4 && piece != 5){
+        break;
+      } 
       else if(!color && (piece == 10 || piece == 11)){
         check_flag = true;
         return true;
@@ -750,8 +754,8 @@ bool Move::check(const ChessBoard &b){
       if(piece == 6 || piece == 12) continue;
 
       //if same color then blocking potential check
-      if(!color && piece > 0 && piece < 7) break;
-      else if(color && piece >= 7) break;
+      if(!color && piece > 0 && piece != 8 && piece != 11) break;
+      else if(color && piece >0 && piece != 2 && piece != 5) break;
       else if(!color && (piece == 8 || piece == 11)){
         check_flag = true;
         return true;
@@ -872,8 +876,8 @@ bool Move::isStillCheck(const ChessBoard &b){
       if(piece == 6 || piece == 12) continue;
 
       //if same color then blocking potential check
-      if(color && piece > 0 && piece < 7) break;
-      else if(!color && piece >= 7) break;
+      if(color && piece > 0 && piece != 10 && piece != 11) break;
+      else if(!color && piece >0 && piece != 4 && piece != 5) break;
       else if(color && (piece == 10 || piece == 11)){
         check_flag = true;
         return true;
@@ -916,8 +920,8 @@ bool Move::isStillCheck(const ChessBoard &b){
       if(piece == 6 || piece == 12) continue;
 
       //if same color then blocking potential check
-      if(color && piece > 0 && piece < 7) break;
-      else if(!color && piece >= 7) break;
+      if(color && piece > 0 && piece != 8 && piece != 11) break;
+      else if(!color && piece >0 && piece != 2 && piece != 5) break;
       else if(color && (piece == 8 || piece == 11)){
         check_flag = true;
         return true;
@@ -932,7 +936,7 @@ bool Move::isStillCheck(const ChessBoard &b){
 
   //pawn check
   if(color){
-    int temp_i = king_x + 1;
+    int temp_i = king_x - 1;
     int temp_j = king_y - 1;
     int temp_j2 = king_y + 1;
     if(checkInRange(temp_i) && checkInRange(temp_j) && checkInRange(temp_j2)){
@@ -947,7 +951,7 @@ bool Move::isStillCheck(const ChessBoard &b){
     }
   }
   else if(!color){
-    int temp_i = king_x - 1;
+    int temp_i = king_x + 1;
     int temp_j = king_y - 1;
     int temp_j2 = king_y + 1;
     if(checkInRange(temp_i) && checkInRange(temp_j) && checkInRange(temp_j2)){
@@ -969,4 +973,8 @@ bool Move::isStillCheck(const ChessBoard &b){
 
 bool Move::getCheckStatus(){
   return check_flag;
+}
+
+void Move::resetCheckStatus(){
+  if(check_flag) check_flag = false;
 }

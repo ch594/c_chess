@@ -1,7 +1,7 @@
 #include "socket.h"
 #include <SFML/Network.hpp>
 #include <iostream>
-
+#include <cstdlib>
 
 cMessage::cMessage(bool server = true) :server(server) {
   if(server){
@@ -27,11 +27,11 @@ void cMessage::serverInit(){
 
 void cMessage::clientInit(){
 
-  string ip_address("192.168.193.128");
+  string ip_address;
   int port;
   cout <<"Enter the IP Address and port"<<endl;
   cout<<"IP Address: "<<endl;
-  //cin >> ip_address;
+  cin >> ip_address;
   cout <<"Port: "<<endl;
   cin >> port;
   cout <<"port is: " << port << endl;
@@ -55,7 +55,7 @@ void cMessage::sendMessage(string message){
   }
   else{
     cout<<"Error sending packet"<<endl;
-    //exit(0);
+    exit(EXIT_FAILURE);
   }
 }
 
@@ -69,7 +69,7 @@ string cMessage::receiveMessage(){
   }
   else{
     cout<<"Error receiving packet"<<endl;
-    //exit(0);
+    exit(EXIT_FAILURE);
   }
 }
 
